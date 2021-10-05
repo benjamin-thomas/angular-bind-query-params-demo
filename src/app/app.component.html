@@ -1,9 +1,9 @@
 <ul>
-  <li *ngIf="router.url !== '/form'">
+  <li *ngIf="!router.url.startsWith('/form')">
     <a routerLink="/form">Go to form</a>
   </li>
 
-  <li *ngIf="router.url !== '/list'">
+  <li *ngIf="!router.url.startsWith('/list')">
     <a routerLink="/list">Go to list</a>
   </li>
 </ul>

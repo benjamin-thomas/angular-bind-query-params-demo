@@ -3,9 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import {MyFormComponent} from '../components/my-form.component';
 import {MyListComponent} from '../components/my-list.component';
 
+export type RouteData = {
+  reuseComponent: boolean,
+}
+
 const routes: Routes = [
-  {path: '', component: MyFormComponent},
-  {path: 'form', component: MyFormComponent},
+  {path: '', redirectTo: 'form', pathMatch: 'full'},
+  {path: 'form', component: MyFormComponent, data: { reuseComponent: true }},
   {path: 'list', component: MyListComponent},
 ];
 

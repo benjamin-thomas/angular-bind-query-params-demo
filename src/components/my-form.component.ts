@@ -5,6 +5,7 @@ import {BindQueryParamsFactory} from '@ngneat/bind-query-params';
 @Component({
   template: `
     <h2>My form!</h2>
+    <h3>Loaded at: {{loadedAt}}</h3>
 
     <p style="font-family: 'Courier New',sans-serif">
       {{form.value | json}}
@@ -25,11 +26,15 @@ import {BindQueryParamsFactory} from '@ngneat/bind-query-params';
     </form>
 
     <button
-      style="margin-top: 10px;"
+      style="margin-top: 10px; margin-right: 10px"
       routerLink="."
       (click)="refreshNav()"
       [queryParams]="{firstName: 'AAA', lastName: 'BBB'}"
       type="button">SET VIA NAV THEN SYNC DEFS AFTER 1S
+    </button>
+
+    <button (click)="manager.syncAllDefs()" type="button">
+      SYNC DEFS
     </button>
   `,
   styles: [
@@ -58,8 +63,10 @@ export class MyFormComponent implements OnDestroy {
     {queryKey: 'firstName'},
     {queryKey: 'lastName', strategy: 'modelToUrl'},
   ]).connect(this.form);
+  loadedAt: number;
 
   constructor(private factory: BindQueryParamsFactory) {
+    this.loadedAt = Date.now();
   }
 
   ngOnDestroy(): void {
