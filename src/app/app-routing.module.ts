@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {MyFormComponent} from '../components/my-form.component';
-import {MyListComponent} from '../components/my-list.component';
+import {MyFormComponent} from './components/my-form.component';
+import {MyListComponent} from './components/my-list.component';
 
 export type RouteData = {
   reuseComponent: boolean,
