@@ -8,12 +8,14 @@ import {MyListComponent} from './components/my-list.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {RouteReuseStrategy} from '@angular/router';
 import {AppRouteReuseStrategy} from './app-route-reuse-strategy';
+import {SpinnerComponent} from './components/spinner.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MyFormComponent,
     MyListComponent,
+    SpinnerComponent,
   ],
   imports: [
     BrowserModule,

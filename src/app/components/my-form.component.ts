@@ -1,11 +1,17 @@
 import {Component, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {BindQueryParamsFactory} from '@ngneat/bind-query-params';
+import {of} from 'rxjs';
+import {delay, tap} from 'rxjs/operators';
 
 @Component({
   template: `
     <h2>My form!</h2>
     <h3>Loaded at: {{loadedAt}}</h3>
+    <h4>Slow request:
+      {{ slowRequest$ | async }}
+      <app-spinner *ngIf="showSpinner"></app-spinner>
+    </h4>
 
     <p style="font-family: 'Courier New',sans-serif">
       {{form.value | json}}
@@ -53,6 +59,12 @@ import {BindQueryParamsFactory} from '@ngneat/bind-query-params';
   ]
 })
 export class MyFormComponent implements OnDestroy {
+  showSpinner = true;
+
+  slowRequest$ = of('A SERVER MESSAGE').pipe(
+    delay(5000),
+    tap(_ => this.showSpinner = false),
+  );
 
   form = new FormGroup({
     firstName: new FormControl(),
