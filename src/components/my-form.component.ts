@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
+import {BindQueryParamsFactory} from '@ngneat/bind-query-params';
 
 @Component({
   template: `
@@ -21,8 +22,15 @@ import {FormControl, FormGroup} from '@angular/forms';
         <input formControlName="lastName" id="lastName" type="text">
       </div>
 
-
     </form>
+
+    <button
+      style="margin-top: 10px;"
+      routerLink="."
+      (click)="refreshNav()"
+      [queryParams]="{firstName: 'AAA', lastName: 'BBB'}"
+      type="button">SET VIA NAV THEN SYNC DEFS AFTER 1S
+    </button>
   `,
   styles: [
     `
@@ -39,10 +47,28 @@ import {FormControl, FormGroup} from '@angular/forms';
     `
   ]
 })
-export class MyFormComponent {
+export class MyFormComponent implements OnDestroy {
 
   form = new FormGroup({
     firstName: new FormControl(),
     lastName: new FormControl(),
-  })
+  });
+
+  manager = this.factory.create([
+    {queryKey: 'firstName'},
+    {queryKey: 'lastName', strategy: 'modelToUrl'},
+  ]).connect(this.form);
+
+  constructor(private factory: BindQueryParamsFactory) {
+  }
+
+  ngOnDestroy(): void {
+    this.manager.destroy();
+  }
+
+  refreshNav() {
+    setTimeout(() => {
+      this.manager.syncAllDefs();
+    }, 1000);
+  }
 }
