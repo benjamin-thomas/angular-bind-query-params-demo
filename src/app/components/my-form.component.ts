@@ -3,10 +3,19 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {BindQueryParamsFactory} from '@ngneat/bind-query-params';
 import {of} from 'rxjs';
 import {delay, tap} from 'rxjs/operators';
+import {OnAttach} from '../directives/route-reuse-life-cycle.directive';
 
 @Component({
   template: `
+
     <h2>My form!</h2>
+    <label for="keep-data">
+      Keep form data
+      <input style="display: inline"
+             [(ngModel)]="keepFormData"
+             id="keep-data" type="checkbox">
+    </label>
+
     <h3>Loaded at: {{loadedAt}}</h3>
     <h4>Slow request:
       {{ slowRequest$ | async }}
@@ -14,7 +23,7 @@ import {delay, tap} from 'rxjs/operators';
     </h4>
 
     <p style="font-family: 'Courier New',sans-serif">
-      {{form.value | json}}
+      {{form.value | json}} keep={{ keepFormData }}
     </p>
 
     <form [formGroup]="form" autocomplete="off">
@@ -58,8 +67,9 @@ import {delay, tap} from 'rxjs/operators';
     `
   ]
 })
-export class MyFormComponent implements OnDestroy {
+export class MyFormComponent implements OnDestroy, OnAttach {
   showSpinner = true;
+  keepFormData = true;
 
   slowRequest$ = of('A SERVER MESSAGE').pipe(
     delay(5000),
@@ -83,6 +93,17 @@ export class MyFormComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.manager.destroy();
+  }
+
+  onAttach(): void {
+    console.log('ON ATTACH!!', this.form.value);
+    // this.manager.syncAllDefs(); // does not work
+
+    if (this.keepFormData) {
+      this.form.setValue(this.form.value); // forces form<>URL sync
+    } else {
+      this.form.reset(); // Or reset the form
+    }
   }
 
   refreshNav() {
