@@ -77,6 +77,10 @@ export class AppRouteReuseStrategy implements RouteReuseStrategy {
     if (DEBUG) {
       console.log('%cDEBUG[retrieve]', 'background:green', {path});
     }
+
+    // @ts-ignore
+    handle.componentRef.instance.onRouterReuse()
+
     return handle;
   }
 
