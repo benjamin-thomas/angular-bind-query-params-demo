@@ -2,7 +2,9 @@ import {Component, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {BindQueryParamsFactory} from '@ngneat/bind-query-params';
 import {of} from 'rxjs';
-import {delay, tap} from 'rxjs/operators';
+import {delay, filter, take, tap} from 'rxjs/operators';
+import {OnRouterReuse} from "../onRouterReuse";
+import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
   template: `
@@ -58,7 +60,7 @@ import {delay, tap} from 'rxjs/operators';
     `
   ]
 })
-export class MyFormComponent implements OnDestroy {
+export class MyFormComponent implements OnDestroy, OnRouterReuse {
   showSpinner = true;
 
   slowRequest$ = of('A SERVER MESSAGE').pipe(
@@ -77,8 +79,18 @@ export class MyFormComponent implements OnDestroy {
   ]).connect(this.form);
   loadedAt: number;
 
-  constructor(private factory: BindQueryParamsFactory) {
+  constructor(private factory: BindQueryParamsFactory,
+              private router: Router) {
     this.loadedAt = Date.now();
+  }
+
+  onRouterReuse(): void {
+    this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      take(1))
+      .subscribe(() => {
+        // @ts-ignore
+        this.manager.updateQueryParams(this.form.value);
+      })
   }
 
   ngOnDestroy(): void {
